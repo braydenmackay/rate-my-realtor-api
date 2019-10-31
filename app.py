@@ -22,7 +22,7 @@ class Review(db.Model):
     brokerage = db.Column(db.String(100))
     city = db.Column(db.String(100))
     state = db.Column(db.String(2))
-    review = db.Column(db.Blob)
+    review = db.Column(db.Text)
 
     def __init__(self, name, rating, brokerage, city, state, review):
         self.name = name
