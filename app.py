@@ -18,7 +18,7 @@ class Review(db.Model):
     __tablename__ = "reviews"
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    rating = db.Column(db.Interger)
+    rating = db.Column(db.Integer)
     brokerage = db.Column(db.String(100))
     city = db.Column(db.String(100))
     state = db.Column(db.String(2))
