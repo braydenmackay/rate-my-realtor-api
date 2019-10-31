@@ -114,6 +114,12 @@ def get_email():
     result = emails_schema.dump(all_emails)
     return jsonify(result)
 
+@app.route("/reviews/<id>", methods=["GET"])
+def get_email(id):
+    email = Email.query.get(id)
+    result = email_schema.dump(email)
+    return jsonify(result)
+
 @app.route("/email", methods=["POST"])
 def add_email():
     first = request.json["first"]
