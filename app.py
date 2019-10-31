@@ -111,7 +111,7 @@ email_schema = EmailSchema(many=True)
 @app.route("/emails", methods=["GET"])
 def get_emails():
     all_emails = Email.query.all()
-    result = emails_schema.dump(all_emails)
+    result = email_schema.dump(all_emails)
     return jsonify(result)
 
 @app.route("/reviews/<id>", methods=["GET"])
