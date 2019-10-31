@@ -106,15 +106,15 @@ class EmailSchema(ma.Schema):
         fields = ("id", "first", "last", "email")
 
 email_schema = EmailSchema()
-email_schema = EmailSchema(many=True)
+emails_schema = EmailSchema(many=True)
 
 @app.route("/emails", methods=["GET"])
 def get_emails():
     all_emails = Email.query.all()
-    result = email_schema.dump(all_emails)
+    result = emails_schema.dump(all_emails)
     return jsonify(result)
 
-@app.route("/reviews/<id>", methods=["GET"])
+@app.route("/email/<id>", methods=["GET"])
 def get_email(id):
     email = Email.query.get(id)
     result = email_schema.dump(email)
