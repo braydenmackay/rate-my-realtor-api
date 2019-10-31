@@ -109,7 +109,7 @@ email_schema = EmailSchema()
 email_schema = EmailSchema(many=True)
 
 @app.route("/emails", methods=["GET"])
-def get_email():
+def get_emails():
     all_emails = Email.query.all()
     result = emails_schema.dump(all_emails)
     return jsonify(result)
