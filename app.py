@@ -70,7 +70,7 @@ def add_review():
     created_review = Review.query.get(new_review.id)
     return review_schema.jsonify(created_review)
 
-@app.route("/search", methods=["POST"])
+@app.route("/search", methods=["GET"])
 def search():
     all_realtors = Reviews.query.all()
     results = reviews_schema.dump(all_realtors)
