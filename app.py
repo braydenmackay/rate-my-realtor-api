@@ -70,19 +70,6 @@ def add_review():
     created_review = Review.query.get(new_review.id)
     return review_schema.jsonify(created_review)
 
-@app.route("/search", methods=["GET"])
-def search():
-    all_realtors = Reviews.query.all()
-    results = reviews_schema.dump(all_realtors)
-
-    name = request.json['name']
-
-    for result in results:
-        if result['name'] == name:
-            return result['id']
-    return "Name not found"
-
-
 @app.route("/review/<id>", methods=["PUT"])
 def update_review(id):
     review = Review.query.get(id)
