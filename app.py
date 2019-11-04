@@ -32,6 +32,9 @@ class Review(db.Model):
         self.state = state
         self.review = review
 
+    def __repr__(self):
+        return '<{}>'.format(self.name)
+
 class ReviewSchema(ma.Schema):
     class Meta:
         fields = ("id", "name", "rating", "brokerage", "city", "state", "review")
@@ -66,6 +69,19 @@ def add_review():
 
     created_review = Review.query.get(new_review.id)
     return review_schema.jsonify(created_review)
+
+@app.route("/search", methods=["POST"])
+def search():
+    all_realtors = Reviews.query.all()
+    results = reviews_schema.dump(all_realtors)
+
+    name = request.json['name']
+
+    for result in results:
+        if result['name'] == name:
+            return result['id']
+    return "Name not found"
+
 
 @app.route("/review/<id>", methods=["PUT"])
 def update_review(id):
