@@ -15,82 +15,98 @@ db = SQLAlchemy(app)
 ma = Marshmallow(app)
 
 class Review(db.Model):
-    __tablename__ = "reviews"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    rating = db.Column(db.Integer)
+    first_name = db.Column(db.String(100))
+    last_name = db.Column(db.String(100))
     brokerage = db.Column(db.String(100))
-    city = db.Column(db.String(100))
     state = db.Column(db.String(2))
+    city = db.Column(db.String(100))
+    post_code = db.Column(db.String(5))
+    phone = db.Column(db.String(13))
+    realtor_email = db.Column(db.String(100))
+    user_email = db.Column(db.String(100))
+    rating = db.Column(db.Float)
     review = db.Column(db.Text)
 
-    def __init__(self, name, rating, brokerage, city, state, review):
-        self.name = name
-        self.rating = rating
+    def __init__(self, first_name, last_name, brokerage, state, city, post_code, phone, realtor_email, user_email, rating, review):
+        self.first_name = first_name
+        self.last_name = last_name
         self.brokerage = brokerage
-        self.city = city
         self.state = state
+        self.city = city
+        self.post_code = post_code
+        self.phone = phone
+        self.realtor_email = realtor_email
+        self.user_email = user_email
+        self.rating = rating
         self.review = review
-
-    def __repr__(self):
-        return '<{}>'.format(self.name)
 
 class ReviewSchema(ma.Schema):
     class Meta:
-        fields = ("id", "name", "rating", "brokerage", "city", "state", "review")
+        fields = ('first_name', 'last_name', 'brokerage', 'state', 'city', 'post_code', 'phone', 'realtor_email', 'user_email', 'rating', 'review')
 
 review_schema = ReviewSchema()
 reviews_schema = ReviewSchema(many=True)
 
-@app.route("/reviews", methods=["GET"])
+@app.route('/review', methods=["POST"])
+def add_review():
+    first_name = request.json['first_name']
+    last_name = request.json['last_name']
+    brokerage = request.json['brokerage']
+    state = request.json['state']
+    city = request.json['city']
+    post_code = request.json['post_code']
+    phone = request.json['phone']
+    realtor_email = request.json['realtor_email']
+    user_email = request.json['user_email']
+    rating = request.json['rating']
+    review = request.json['review']
+
+    new_review = Review(first_name, last_name, brokerage, state, city, post_code, phone, realtor_email, user_email, rating, review)
+
+    db.session.add(new_review)
+    db.session.commit()
+
+    item = Review.query.get(new_review.id)
+
+    return review_schema.jsonify(item)
+
+@app.route('/reviews', methods=["GET"])
 def get_reviews():
     all_reviews = Review.query.all()
     result = reviews_schema.dump(all_reviews)
     return jsonify(result)
 
-@app.route("/reviews/<id>", methods=["GET"])
+@app.route('/review/<id>', methods=["GET"])
 def get_review(id):
-    review = Review.query.get(id)
-    result = review_schema.dump(review)
-    return jsonify(result)
+    item = Review.query.get(id)
+    return review_schema.jsonify(item)
 
-@app.route("/review", methods=["POST"])
-def add_review():
-    name = request.json["name"]
-    rating = request.json["rating"]
-    brokerage = request.json["brokerage"]
-    city = request.json["city"]
-    state = request.json["state"]
-    review = request.json["review"]
-
-    new_review = Review(name, rating, brokerage, city, state, review)
-    db.session.add(new_review)
-    db.session.commit()
-
-    created_review = Review.query.get(new_review.id)
-    return review_schema.jsonify(created_review)
-
-@app.route("/review/<id>", methods=["PUT"])
+@app.route('/review/<id>', methods=["PUT"])
 def update_review(id):
-    review = Review.query.get(id)
-
-    review.name = request.json["name"]
-    review.rating = request.json["rating"]
-    review.brokerage = request.json["brokerage"]
-    review.city = request.json["city"]
-    review.state = request.json["state"]
-    review.review = request.json["review"]
+    item = Review.query.get(id)
+    item.first_name = request.json['first_name']
+    item.last_name = request.json['last_name']
+    item.brokerage = request.json['brokerage']
+    item.state = request.json['state']
+    item.city = request.json['city']
+    item.post_code = request.json['post_code']
+    item.phone = request.json['phone']
+    item.realtor_email = request.json['realtor_email']
+    item.user_email = request.json['user_email']
+    item.rating = request.json['rating']
+    item.review = request.json['review']
 
     db.session.commit()
-    return review_schema.jsonify(review)
+    return review_schema.jsonify(item)
 
-@app.route("/review/<id>", methods=["DELETE"])
+@app.route('/review/remove/<id>', methods=["DELETE"])
 def delete_review(id):
-    review = Review.query.get(id)
-    db.session.delete(review)
+    item = Review.query.get(id)
+    db.session.delete(item)
     db.session.commit()
 
-    return "REVIEW DELETED"
+    return review_schema.jsonify(item)
 
 class Email(db.Model):
     __tablename__ = "emails"
